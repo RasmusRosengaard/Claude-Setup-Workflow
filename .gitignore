@@ -1,0 +1,10 @@
+# Claude Code personal / local settings — never commit
+.claude/settings.local.json
+
+# Node (only present if a consuming project adds tooling)
+node_modules/
+npm-debug.log*
+
+# OS cruft
+.DS_Store
+Thumbs.db

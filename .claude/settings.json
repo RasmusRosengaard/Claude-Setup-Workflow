@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff:*)"
+    ],
+    "deny": [
+      "Bash(git push:*)",
+      "Bash(git tag:*)",
+      "Bash(npm publish:*)",
+      "Bash(gh release:*)",
+      "Bash(gh repo delete:*)"
+    ]
+  }
+}
