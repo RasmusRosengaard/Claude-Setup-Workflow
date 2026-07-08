@@ -148,6 +148,23 @@ tool for something, say so rather than scaffolding a no-op. Typical options:
   deny list; if they keep push denied, state plainly that push is a user-run step.
   Whatever policy they choose, document it in a line in CLAUDE.md so it's
   discoverable.
+- **Git workflow policy** — only ask this if Claude is actually allowed to commit
+  and/or push (i.e. those were NOT put on the deny list above); if git is fully
+  blocked for Claude, skip it — there's nothing to decide. When Claude does handle
+  git, capture HOW so it's consistent, and record the answers in CLAUDE.md:
+  - **Commit cadence** — one commit per completed feature / logical change, one at
+    the end of a task, or only when you explicitly ask. Default: per feature.
+  - **Push** — auto-push after committing, or commit locally and leave the push to
+    you.
+  - **Pre-commit / pre-push gates** — must tests / lint / format pass first? Tie
+    this to the run-tests and format hooks if installed, and refuse to commit or
+    push on failure.
+  - **Branching** — always work on a feature branch (never commit straight to the
+    default branch), or commit to the current branch.
+  - **Message style** — e.g. Conventional Commits, and whether to add a co-author
+    trailer.
+  Feature-scoped commits pair naturally with `FEATURES.md`: flip a feature to
+  `done` in the tracker in the same commit that finishes it.
 - **Autopilot (auto-edit) mode** — let Claude apply edits without prompting, while
   the chosen deny policy above still blocks the guarded actions. If chosen, enable
   `acceptEdits` in `.claude/settings.local.json` and install the `/autopilot`
@@ -257,6 +274,9 @@ For each option, add it if selected, remove it if declined:
 - **Guardrail policy** — record the deny policy the user chose in Step 3 (which
   actions are hard-blocked, and whether push is Claude-run or user-run) so it's
   discoverable and the autopilot/GitHub steps don't contradict each other.
+- **Git workflow** — if a git workflow policy was chosen in Step 3, record it as a
+  short section (commit cadence, push behavior, pre-commit/push gates, branching,
+  message style) so Claude commits and pushes the same way every session.
 
 ### README.md (human-facing)
 Update the README so it describes the project as it now stands — do this every
