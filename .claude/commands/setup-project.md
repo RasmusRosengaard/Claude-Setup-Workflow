@@ -35,7 +35,17 @@ unrelated, or may be `.claude/` tooling from a prior run. Ask explicitly:
 
 Only after they answer, ask the rest (infer what you can from Step 1; only ask
 what you couldn't determine):
-- **Purpose** — what is this project / who is it for? (one line is fine)
+- **Project brief** — capture enough to seed CLAUDE.md and the README, not just a
+  tagline. Ask for:
+  - **Purpose** — what is this project and what problem does it solve? (1–2 lines)
+  - **Main features** — the handful of things it does / will do (a short bullet
+    list; if scaffolding a new app, these are the intended features).
+  - **Target users** — who is it for?
+  - **Non-goals / scope** (optional) — anything explicitly out of scope, so the
+    docs and Claude don't drift into it.
+  Infer what you can from Step 1 (an existing README or manifest often states the
+  purpose), confirm it rather than re-asking, and keep it tight — a few bullets,
+  not an essay. You'll persist this into CLAUDE.md and the README in Step 5.
 - **Success metric / KPI** — is there a known goal to optimize for
   (latency, test coverage, uptime, conversion)? Skip if none.
 - **Testing** — do they want a test setup, and roughly what kind (unit, e2e, none)?
@@ -195,6 +205,10 @@ For each option, add it if selected, remove it if declined:
 
 ## Step 5 — Sync the docs (CLAUDE.md + README) and report
 ### CLAUDE.md (Claude-facing)
+- **Project brief** — add or refresh a short "What this project is" section from
+  the Step 2 brief: purpose, main features, target users, and any non-goals. Keep
+  it a few lines so a fresh session knows what it's working on and what's out of
+  scope. Don't duplicate the README's prose — state it for the agent audience.
 - **Useful commands** — replace any placeholder/example commands with THIS
   project's real ones, derived from the stack (Step 2): the actual package
   manager and scripts (e.g. `pnpm dev`, `cargo test`, `uv run pytest`,
@@ -210,8 +224,9 @@ For each option, add it if selected, remove it if declined:
 Update the README so it describes the project as it now stands — do this every
 run; it is not a menu item. Note this means the CURRENT project's README, not
 this wizard's own repo.
-- **What to write** — pull the one-line purpose from the Step 2 profile; document
-  the real stack, prerequisites, and how to install / run / test using the same
+- **What to write** — lead with the purpose and a short **Features** list from the
+  Step 2 brief (and who it's for); then document the real stack, prerequisites, and
+  how to install / run / test using the same
   real commands you put in CLAUDE.md (never generic `npm run …` that don't exist
   here). Add a short "what's here" note only for tooling you actually scaffolded
   in Step 4 (Docker, CI, agents, autopilot) — nothing aspirational.
