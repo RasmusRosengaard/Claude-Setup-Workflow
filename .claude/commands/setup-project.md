@@ -143,6 +143,14 @@ tool for something, say so rather than scaffolding a no-op. Typical options:
 - **CI pipeline** — a `.github/workflows/` file running lint + tests on PRs.
 - **Release skill** — a `.claude/skills/` playbook for cutting releases.
 - **Conventions in CLAUDE.md** — architecture principles, style, commands.
+- **Session continuity (handoff)** — make it possible for a fresh session or a
+  teammate to resume cleanly. Document a short "Resuming work" procedure in
+  CLAUDE.md (Step 5), and ensure a `/handoff` command is available: if the user
+  already has the user-level `/handoff`, just reference it; if not, offer to add a
+  project-scoped `.claude/commands/handoff.md` that snapshots goal / state /
+  uncommitted diff / next steps to `HANDOFF.md`. The resume story is `FEATURES.md`
+  (durable feature status) + the latest `HANDOFF.md` (in-flight session state) +
+  CLAUDE.md (how the project works) — run `/handoff` before ending a session.
 - **Guardrail deny policy** — which actions stay HARD-BLOCKED for Claude via the
   `deny` list in `.claude/settings.json`. Do NOT hard-code this — ask it as a
   question. Offer the usual candidates (`git push`, `git tag`, `npm publish`,
@@ -281,6 +289,11 @@ For each option, add it if selected, remove it if declined:
 - **Git workflow** — if a git workflow policy was chosen in Step 3, record it as a
   short section (commit cadence, push behavior, pre-commit/push gates, branching,
   message style) so Claude commits and pushes the same way every session.
+- **Resuming work** — add a short section telling a fresh session how to pick up:
+  read CLAUDE.md, check `FEATURES.md` for current feature statuses, and read the
+  latest `HANDOFF.md` if one exists; run `/handoff` before ending a session to
+  snapshot in-flight state. Only include this if session continuity was set up (or
+  `/handoff` is available).
 
 ### README.md (human-facing)
 Update the README so it describes the project as it now stands — do this every
