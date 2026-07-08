@@ -18,10 +18,9 @@ duplicates or clobber existing config:
 - **Is the directory empty or non-empty?** If it already has files, note which —
   you'll need this to decide between tooling-up vs. scaffolding-new in Step 2, and
   to protect existing files in Step 4.
-- **Tooling availability** — if a GitHub link looks likely, check the tools NOW,
-  not at push time: run `gh --version` and `gh auth status`. If `gh` is missing or
-  unauthenticated, remember it and surface the requirement up front in Step 3 so
-  you never promise a push you can't perform.
+- **Remote status** — note whether an `origin` remote already exists (from the
+  `git remote -v` above). The GitHub-link step does NOT need the `gh` CLI — it
+  links a repo the user creates on github.com — so don't gate anything on `gh`.
 Briefly tell the user what you found (one or two lines).
 
 ## Step 2 — Profile the project first (use the AskUserQuestion tool)
@@ -132,10 +131,15 @@ tool for something, say so rather than scaffolding a no-op. Typical options:
   feature's code lives, its conventions, and how to test it. **Skip this entirely
   if the brief is too thin to derive real domains — do not invent features.**
 - **Docker + compose** — a `Dockerfile` and `docker-compose.yml` for local dev.
-- **GitHub link** — create/link a repo and push (`gh repo create`), add remote.
-  Requires `gh` installed + authenticated (checked in Step 1). If push is on the
-  guardrail deny list (below), be explicit that **Claude cannot run the push — the
-  user runs it** — don't imply otherwise.
+- **GitHub link** — connect this project to a GitHub repo. Default path needs no
+  `gh` CLI: ask the user to create an empty repo on github.com (no README/.gitignore
+  so the first push isn't rejected), paste its URL, then wire it with
+  `git remote add origin <url>` (or update an existing `origin`). The first push
+  then follows the git workflow policy — if push is on the deny list, hand the user
+  `git push -u origin <branch>` to run; otherwise Claude pushes per that policy.
+  Only if the user *already* has `gh` installed and authenticated may you offer
+  `gh repo create --source=. --push` as a one-step shortcut — optional, never
+  required, never installed for them.
 - **CI pipeline** — a `.github/workflows/` file running lint + tests on PRs.
 - **Release skill** — a `.claude/skills/` playbook for cutting releases.
 - **Conventions in CLAUDE.md** — architecture principles, style, commands.
@@ -246,11 +250,11 @@ For each option, add it if selected, remove it if declined:
   (e.g. Vite's Vue demo uses an SVG sprite `<use href="/icons.svg">` that crashes
   jsdom). If you scaffold a sample test, write it against a tiny component you
   author, so the first test run is green.
-- For the GitHub link, confirm before any network action (repo creation, push).
-  Verify `gh` is installed + authenticated first (from Step 1); if not, stop and
-  give the user the exact `gh auth login` / install step rather than failing at
-  push. If push is on the deny list, hand the user the `git push` command to run
-  themselves — don't attempt it.
+- For the GitHub link, confirm before any network action (adding the remote,
+  push). The default path needs no `gh`: the user creates the repo on github.com
+  and gives you the URL, you `git remote add origin <url>`, then push per the git
+  workflow policy (or hand the user `git push -u origin <branch>` if push is
+  denied). Don't require or install `gh`.
 - **On Windows, offer a `.gitattributes`** (`* text=auto eol=lf`) when initializing
   git, so the first commit doesn't flood CRLF warnings.
 - Keep CLAUDE.md lean: add a short section per item, reference longer docs
@@ -298,7 +302,8 @@ this wizard's own repo.
 ### Report
 - Summarize what you created as a file tree, and list any follow-ups the user
   still needs to do by hand — call out the timing-gated ones explicitly:
-  `gh auth login`, set secrets, install deps, run `git push` yourself (if denied),
+  create the GitHub repo on github.com and share its URL, set secrets, install
+  deps, run `git push` yourself (if denied),
   and note that the **model pin and autopilot mode both take effect next session**.
 
 Guardrails: confirm before outward-facing or hard-to-reverse actions (pushing to
