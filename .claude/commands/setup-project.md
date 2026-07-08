@@ -38,8 +38,13 @@ what you couldn't determine):
 - **Project brief** — capture enough to seed CLAUDE.md and the README, not just a
   tagline. Ask for:
   - **Purpose** — what is this project and what problem does it solve? (1–2 lines)
-  - **Main features** — the handful of things it does / will do (a short bullet
-    list; if scaffolding a new app, these are the intended features).
+  - **Main features** — the handful of things it does / will do. Offer two ways
+    to get this list: the user names the features, OR **Claude proposes** a
+    candidate list (inferred from the brief, any existing README, and the code)
+    and the user **verifies** it. When you propose, present the candidates as a
+    multi-select so the user can deselect ones that don't apply and add their own
+    — never accept an inferred list silently. This confirmed list is the source of
+    truth for the feature tracker (`FEATURES.md`) and the Feature agents below.
   - **Target users** — who is it for?
   - **Non-goals / scope** (optional) — anything explicitly out of scope, so the
     docs and Claude don't drift into it.
@@ -108,8 +113,17 @@ tool for something, say so rather than scaffolding a no-op. Typical options:
   error handling, test coverage, no leaked secrets, consistency with existing
   patterns), tell it to report findings ranked by severity, and to say "no issues"
   when clean rather than inventing nits.
+- **Feature list / progress tracker** — write the confirmed features to a
+  `FEATURES.md` at the project root as a living checklist: each feature on its own
+  line with a status (`planned` / `in progress` / `done`), so it doubles as a
+  progress tracker the user updates over time. This is the canonical feature list —
+  CLAUDE.md and the Feature agents reference it instead of duplicating it. Default
+  the filename to `FEATURES.md`; use `PROGRESS.md` if the user prefers a
+  status-first framing. On a re-run, refresh statuses rather than clobbering ones
+  the user has hand-edited.
 - **Feature agents** — offer to scaffold one domain-scoped subagent per major
-  feature from the Step 2 brief (e.g. for a web app: an `api-endpoint` agent, a
+  feature from the confirmed feature list (`FEATURES.md`, or the Step 2 brief if
+  no tracker was created) (e.g. for a web app: an `api-endpoint` agent, a
   `ui-component` agent, a `db-migration` agent; for a data pipeline: an `etl-step`
   agent). Derive the candidates from the features the user listed and present them
   as their own multi-select — nothing forced. For each, write
@@ -228,9 +242,11 @@ For each option, add it if selected, remove it if declined:
 ## Step 5 — Sync the docs (CLAUDE.md + README) and report
 ### CLAUDE.md (Claude-facing)
 - **Project brief** — add or refresh a short "What this project is" section from
-  the Step 2 brief: purpose, main features, target users, and any non-goals. Keep
-  it a few lines so a fresh session knows what it's working on and what's out of
-  scope. Don't duplicate the README's prose — state it for the agent audience.
+  the Step 2 brief: purpose, target users, and any non-goals. Keep it a few lines
+  so a fresh session knows what it's working on and what's out of scope. Don't
+  duplicate the README's prose — state it for the agent audience. If a
+  `FEATURES.md` was created, **link to it** for the feature list rather than
+  re-listing the features here (one source of truth).
 - **Useful commands** — replace any placeholder/example commands with THIS
   project's real ones, derived from the stack (Step 2): the actual package
   manager and scripts (e.g. `pnpm dev`, `cargo test`, `uv run pytest`,
