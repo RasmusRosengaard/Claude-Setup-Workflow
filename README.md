@@ -2,13 +2,13 @@
 
 A collection of reusable **[Claude Code](https://claude.com/claude-code) slash-command wizards** for bootstrapping and maintaining projects. Drop them into your user-level Claude Code config and they work in every project you open.
 
-The centerpiece is **`/setup-project`** — an interactive wizard that profiles your project, then scaffolds exactly the tooling you ask for (agents, hooks, Docker, CI, GitHub, conventions), tailored to your stack.
+The centerpiece is **`/setup-project`** — an interactive wizard that captures a short project brief (purpose, features, users) and profiles your stack, then scaffolds exactly the tooling you ask for (agents, hooks, Docker, CI, GitHub, conventions) and syncs `CLAUDE.md` + your `README`.
 
 ## What's included
 
 | Command | What it does |
 |---------|--------------|
-| `/setup-project` | Interactive project-bootstrap wizard: surveys the repo, profiles purpose/KPI/stack/models, then scaffolds only what you pick — with stack-aware suggestions. |
+| `/setup-project` | Interactive project-bootstrap wizard: surveys the repo, captures a project brief (purpose/features/users) and profiles KPI/stack/models, then scaffolds only what you pick — with stack-aware suggestions — and syncs `CLAUDE.md` + `README`. |
 | `/new-agent` | Scaffold a custom subagent (name, purpose, tools, model) with correct frontmatter. |
 | `/new-skill` | Scaffold an on-demand skill (`SKILL.md`) with a specific trigger and steps. |
 | `/new-command` | Scaffold a custom slash command (`$ARGUMENTS` handling, prompt body). |
