@@ -1,5 +1,5 @@
 ---
-description: Interactively set up a project — interview the user on what they want, then scaffold agents, skills, Docker, CI, and a GitHub link, and sync CLAUDE.md and the README.
+description: Interactively set up a project — interview the user on what they want, then scaffold agents (reviewer, architect, feature agents), skills, Docker, CI, and a GitHub link, and sync CLAUDE.md and the README.
 ---
 
 You are running the project-setup wizard. Your job is to interview the user about
@@ -101,8 +101,22 @@ an option needs a concrete tool, pick it from the stack — e.g. formatter/test
 hooks use prettier + vitest/jest for Node, ruff/black + pytest for Python, gofmt
 + `go test` for Go, rustfmt + `cargo test` for Rust. If the stack has no standard
 tool for something, say so rather than scaffolding a no-op. Typical options:
-- **Code-reviewer agent** — a subagent in `.claude/agents/` that reviews diffs;
-  pin its `model:` to the review model chosen in Step 2's orchestration.
+- **Code-reviewer agent** — a real reviewer template in `.claude/agents/`, not a
+  stub. Scope `tools:` to read-only (`Read, Grep, Glob`, plus `Bash` only to run
+  the linter/tests) — never `Edit`/`Write`. Pin `model:` to the review model from
+  Step 2. Give it a concrete, stack-specific checklist (e.g. for Node: correctness,
+  error handling, test coverage, no leaked secrets, consistency with existing
+  patterns), tell it to report findings ranked by severity, and to say "no issues"
+  when clean rather than inventing nits.
+- **Feature agents** — offer to scaffold one domain-scoped subagent per major
+  feature from the Step 2 brief (e.g. for a web app: an `api-endpoint` agent, a
+  `ui-component` agent, a `db-migration` agent; for a data pipeline: an `etl-step`
+  agent). Derive the candidates from the features the user listed and present them
+  as their own multi-select — nothing forced. For each, write
+  `.claude/agents/<feature>.md` with a trigger-oriented `description:` ("Use when
+  adding or changing <feature>…") and a system prompt that names where that
+  feature's code lives, its conventions, and how to test it. **Skip this entirely
+  if the brief is too thin to derive real domains — do not invent features.**
 - **Docker + compose** — a `Dockerfile` and `docker-compose.yml` for local dev.
 - **GitHub link** — create/link a repo and push (`gh repo create`), add remote.
   Requires `gh` installed + authenticated (checked in Step 1). If push is on the
@@ -133,7 +147,9 @@ tool for something, say so rather than scaffolding a no-op. Typical options:
   role that got a stronger model (planning, review), scaffold the matching pinned
   subagent — e.g. `.claude/agents/architect.md` with `model:` set to the planning
   model — so heavy reasoning and review are delegated there while the main session
-  stays on the cheaper model.
+  stays on the cheaper model. Make the architect **planning-only**: read-only
+  `tools:` (no `Edit`/`Write`), and a system prompt that states it produces a plan,
+  not edits.
 - **Guardrail hooks** — install event-driven hooks (run by the harness, not
   Claude, so they're deterministic — unlike CLAUDE.md rules). Create
   `.claude/hooks/` with three Node scripts and wire them in `.claude/settings.json`.
@@ -175,6 +191,12 @@ For each option, add it if selected, remove it if declined:
   framework, and package manager from what you found in Step 1 — do not guess
   blindly; ask if truly ambiguous).
 - Never overwrite an existing file without showing the user and confirming.
+- **Every generated agent** (reviewer, architect, feature agents) follows the same
+  conventions `/new-agent` uses: kebab-case `name:`, a specific trigger-oriented
+  `description:`, the **minimum** `tools:` for its job (read-only agents get
+  `Read, Grep, Glob`; omit `Edit`/`Write` unless it must modify files), a `model:`
+  pin per the Step 2 split, and a system prompt with concrete step-by-step
+  behavior — no generic "follow best practices" filler.
 - **Do all `.claude/settings.json` writes in ONE final pass, and install the
   block-protected hook LAST.** Once that hook is live it denies edits to
   `settings.json` itself, so any later attempt to add the model pin, fix a hook
